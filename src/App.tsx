@@ -121,6 +121,7 @@ const Navbar = () => {
     { name: "About", href: "#about" },
     { name: "Projects", href: "#projects" },
     { name: "Skills", href: "#skills" },
+    { name: "Start a Project", href: "#start-project" },
     { name: "Contact", href: "#contact" },
   ];
 
@@ -357,6 +358,126 @@ const SkillsSection = () => {
   );
 };
 
+const StartProjectForm = () => {
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    description: ''
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('submitting');
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setStatus('success');
+    setFormData({ name: '', email: '', description: '' });
+    setTimeout(() => setStatus('idle'), 5000);
+  };
+
+  return (
+    <section id="start-project" className="py-32 bg-[#0a0a0a] relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
+      
+      <div className="max-w-3xl mx-auto px-6 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 text-slate-200">
+            START A <span className="text-indigo-500">PROJECT.</span>
+          </h2>
+          <p className="text-slate-400 text-xl font-light leading-relaxed">
+            Have a vision? Let's bring it to life together. Fill out the details below 
+            and I'll get back to you within 24 hours.
+          </p>
+        </motion.div>
+
+        <motion.form
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          onSubmit={handleSubmit}
+          className="space-y-8 bg-white/[0.02] border border-white/10 p-8 md:p-12 rounded-[40px] backdrop-blur-xl"
+        >
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <label htmlFor="name" className="text-sm font-medium text-slate-400 ml-2">What should I call you?</label>
+              <input
+                required
+                type="text"
+                id="name"
+                placeholder="Your Name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium text-slate-400 ml-2">Where can I reach you?</label>
+              <input
+                required
+                type="email"
+                id="email"
+                placeholder="work@company.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="description" className="text-sm font-medium text-slate-400 ml-2">Tell me about your vision</label>
+            <textarea
+              required
+              id="description"
+              rows={5}
+              placeholder="I'm looking to build a..."
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all resize-none"
+            />
+          </div>
+
+          <div className="flex justify-center">
+            <button
+              disabled={status !== 'idle'}
+              type="submit"
+              className={`group relative px-12 py-5 rounded-full font-bold text-lg transition-all duration-300 flex items-center gap-3 ${
+                status === 'success' 
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/20'
+              }`}
+            >
+              <AnimatePresence mode="wait">
+                {status === 'idle' && (
+                  <motion.span key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-3">
+                    Send Proposal <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  </motion.span>
+                )}
+                {status === 'submitting' && (
+                  <motion.span key="submitting" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-3">
+                    Sending... <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  </motion.span>
+                )}
+                {status === 'success' && (
+                  <motion.span key="success" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-3">
+                    Received! <Check size={20} />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
+          </div>
+        </motion.form>
+      </div>
+    </section>
+  );
+};
+
 const Footer = () => {
   const [copied, setCopied] = useState(false);
 
@@ -579,6 +700,7 @@ export default function App() {
         </section>
 
         <SkillsSection />
+        <StartProjectForm />
       </main>
 
       <Footer />
